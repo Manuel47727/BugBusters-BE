@@ -5,6 +5,7 @@ import com.example.examTableProject.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -24,4 +25,14 @@ public class RoomController {
     public List<Room> getAllRooms() {
         return roomService.getAllRooms();
     }
+
+    @GetMapping("/getAvailableRooms")
+    public List<Room> getAvailableRooms(
+            @RequestParam LocalDateTime examTime,
+            @RequestParam int studentNum,
+            @RequestParam boolean needComputer) {
+        return roomService.getAvailableRooms(examTime, studentNum, needComputer);
+    }
+
+
 }
