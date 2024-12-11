@@ -1,6 +1,5 @@
 package com.example.examTableProject.service;
 
-import com.example.examTableProject.model.Course;
 import com.example.examTableProject.model.Evaluation;
 import com.example.examTableProject.repository.EvaluationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,5 +26,14 @@ public class EvaluationServiceImpl implements EvaluationService {
     @Override
     public List<Evaluation> getAllEvaluations() {
         return evaluationRepository.findAll();
+    }
+
+    @Override
+    public void deleteEvaluationsForUC(int ucId) {
+        // Delete evaluations for the given ucId
+        List<Evaluation> evaluations = evaluationRepository.findByUcId(ucId);
+        if (evaluations != null && !evaluations.isEmpty()) {
+            evaluationRepository.deleteAll(evaluations);
+        }
     }
 }

@@ -29,6 +29,11 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public Room getRoomNameNum(int id) {
+        return roomRepository.findById(id).orElse(null);
+    }
+
+    @Override
     public List<Room> getAvailableRooms(LocalDateTime examTime, int studentNum, boolean needComputer) {
         // Get all rooms that satisfy capacity and computer requirements
         List<Room> eligibleRooms = roomRepository.findByCapacityAndType(studentNum, needComputer ? "Computadores" : null);

@@ -14,10 +14,13 @@ public class EvaluationController {
     @Autowired
     private EvaluationService evaluationService;
 
-    @PostMapping("/add")
-    public String add(@RequestBody Evaluation evaluation) {
-        evaluationService.addEvaluation(evaluation);
-        return "Evaluation saved";
+    @PostMapping("/save")
+    public String add(@RequestBody List<Evaluation> evaluations, @RequestParam int ucId) {
+        evaluationService.deleteEvaluationsForUC(ucId);
+        for (Evaluation evaluation : evaluations) {
+            evaluationService.addEvaluation(evaluation);
+        }
+        return "{\"message\":\"Evaluation saved\"}";
     }
 
     @GetMapping("/get")

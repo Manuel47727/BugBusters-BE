@@ -26,6 +26,11 @@ public class RoomController {
         return roomService.getAllRooms();
     }
 
+    @GetMapping("/get")
+    public Room getRoom(@RequestParam int id) {
+        return roomService.getRoomNameNum(id);
+    }
+
     @GetMapping("/getAvailableRooms")
     public List<Room> getAvailableRooms(
             @RequestParam LocalDateTime examTime,

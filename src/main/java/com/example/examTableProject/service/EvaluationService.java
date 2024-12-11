@@ -10,4 +10,5 @@ public interface EvaluationService {
     public Evaluation addEvaluation(Evaluation evaluation);
     public List<Evaluation> getEvaluationsForUC(int id);
     public List<Evaluation> getAllEvaluations();
+    public void deleteEvaluationsForUC(int ucId);
 }

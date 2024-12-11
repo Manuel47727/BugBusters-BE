@@ -16,6 +16,7 @@ public class UC {
     private int ano;
     private int semestre;
     private String tipo;
+    private boolean isUCClosed;
 
     public UC() {
     }
@@ -66,5 +67,13 @@ public class UC {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    public boolean isUCClosed() {
+        return isUCClosed;
+    }
+
+    public void setUCClosed(boolean isUCClosed) {
+        this.isUCClosed = isUCClosed;
     }
 }

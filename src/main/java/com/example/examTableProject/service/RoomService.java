@@ -9,6 +9,7 @@ public interface RoomService {
 
     public Room addRoom(Room room);
     public List<Room> getAllRooms();
+    public Room getRoomNameNum(int id);
     public List<Room> getAvailableRooms(LocalDateTime examTime, int studentNum, boolean needComputer);
 
 }

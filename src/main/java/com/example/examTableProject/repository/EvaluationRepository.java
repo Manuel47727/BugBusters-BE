@@ -16,4 +16,6 @@ public interface EvaluationRepository extends JpaRepository<Evaluation, Integer>
     @Query("SELECT e.roomId FROM Evaluation e WHERE e.date = :examTime")
     List<Integer> findOccupiedRoomsByTime(@Param("examTime") LocalDateTime examTime);
 
+
+
 }
