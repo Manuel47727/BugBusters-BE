@@ -22,4 +22,9 @@ public class CourseServiceImpl implements CourseService {
     public List<Course> getAllCourses() {
         return courseRepository.findAll();
     }
+
+    @Override
+    public List<Course> getCoursesByIds(List<Integer> courseIds) {
+        return courseRepository.findAllById(courseIds);
+    }
 }
