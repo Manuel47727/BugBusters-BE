@@ -16,6 +16,7 @@ public class UC {
     private int ano;
     private int semestre;
     private String tipo;
+    private boolean mandatory;
     private boolean isUCClosed;
 
     public UC() {
@@ -67,6 +68,14 @@ public class UC {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
     }
 
     public boolean isUCClosed() {

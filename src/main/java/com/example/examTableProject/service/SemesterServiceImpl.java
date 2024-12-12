@@ -22,4 +22,14 @@ public class SemesterServiceImpl implements SemesterService {
     public List<Semester> getAllSemesters() {
         return semesterRespository.findAll();
     }
+
+    @Override
+    public Semester getSemesterById(int id) {
+        return semesterRespository.findById(id).orElse(null);
+    }
+
+    @Override
+    public Semester updateSemester(Semester semester) {
+        return semesterRespository.save(semester);
+    }
 }
