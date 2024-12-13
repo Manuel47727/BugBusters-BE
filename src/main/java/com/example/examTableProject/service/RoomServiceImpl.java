@@ -16,10 +16,26 @@ public class RoomServiceImpl implements RoomService {
     private RoomRepository roomRepository;
 
     @Autowired
-    private EvaluationRepository evaluationRepository; // Add evaluation repository to check conflicts
+    private EvaluationRepository evaluationRepository;
 
     @Override
     public Room addRoom(Room room) {
+        if (room.getRoomNumName() == null || room.getRoomNumName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Room number/name cannot be empty");
+        }
+        if (room.getDesignation() == null || room.getDesignation().trim().isEmpty()) {
+            throw new IllegalArgumentException("Room designation cannot be empty");
+        }
+        if (room.getType() == null || room.getType().trim().isEmpty()) {
+            throw new IllegalArgumentException("Room type cannot be empty");
+        }
+        if (room.getCapacity() <= 0) {
+            throw new IllegalArgumentException("Room capacity must be greater than 0");
+        }
+        if (room.getLocation() == null || room.getLocation().trim().isEmpty()) {
+            throw new IllegalArgumentException("Room location cannot be empty");
+        }
+
         return roomRepository.save(room);
     }
 
@@ -35,16 +51,12 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public List<Room> getAvailableRooms(LocalDateTime examTime, int studentNum, boolean needComputer) {
-        // Get all rooms that satisfy capacity and computer requirements
         List<Room> eligibleRooms = roomRepository.findByCapacityAndType(studentNum, needComputer ? "Computadores" : null);
 
-        // Get room IDs that are already booked for the specified exam time
         List<Integer> occupiedRoomIds = evaluationRepository.findOccupiedRoomsByTime(examTime);
 
-        // Filter out occupied rooms
         return eligibleRooms.stream()
                 .filter(room -> !occupiedRoomIds.contains(room.getId()))
                 .toList();
     }
 }
-

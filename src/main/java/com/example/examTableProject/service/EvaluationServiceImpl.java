@@ -15,6 +15,22 @@ public class EvaluationServiceImpl implements EvaluationService {
 
     @Override
     public Evaluation addEvaluation(Evaluation evaluation) {
+        if (evaluation.getType() == null || evaluation.getType().trim().isEmpty()) {
+            throw new IllegalArgumentException("Evaluation type cannot be empty");
+        }
+        if (evaluation.getWeight() <= 0) {
+            throw new IllegalArgumentException("Weight must be greater than 0");
+        }
+        if (evaluation.getDate() == null) {
+            throw new IllegalArgumentException("Evaluation date cannot be null");
+        }
+        if (evaluation.getRoomId() <= 0) {
+            throw new IllegalArgumentException("Room ID must be a positive number");
+        }
+        if (evaluation.getStudentNum() <= 0) {
+            throw new IllegalArgumentException("Number of students must be greater than 0");
+        }
+
         return evaluationRepository.save(evaluation);
     }
 
@@ -30,7 +46,6 @@ public class EvaluationServiceImpl implements EvaluationService {
 
     @Override
     public void deleteEvaluationsForUC(int ucId) {
-        // Delete evaluations for the given ucId
         List<Evaluation> evaluations = evaluationRepository.findByUcId(ucId);
         if (evaluations != null && !evaluations.isEmpty()) {
             evaluationRepository.deleteAll(evaluations);

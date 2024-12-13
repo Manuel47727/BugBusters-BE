@@ -15,6 +15,19 @@ public class SemesterServiceImpl implements SemesterService {
 
     @Override
     public Semester saveSemester(Semester semester) {
+        if (semester.getNumSemester() <= 0) {
+            throw new IllegalArgumentException("Semester number must be greater than 0");
+        }
+        if (semester.getStartDate() == null) {
+            throw new IllegalArgumentException("Start date cannot be null");
+        }
+        if (semester.getEndDate() == null) {
+            throw new IllegalArgumentException("End date cannot be null");
+        }
+        if (semester.getStartDate().isAfter(semester.getEndDate())) {
+            throw new IllegalArgumentException("Start date cannot be after end date");
+        }
+
         return semesterRespository.save(semester);
     }
 
@@ -30,6 +43,19 @@ public class SemesterServiceImpl implements SemesterService {
 
     @Override
     public Semester updateSemester(Semester semester) {
+        if (semester.getNumSemester() <= 0) {
+            throw new IllegalArgumentException("Semester number must be greater than 0");
+        }
+        if (semester.getStartDate() == null) {
+            throw new IllegalArgumentException("Start date cannot be null");
+        }
+        if (semester.getEndDate() == null) {
+            throw new IllegalArgumentException("End date cannot be null");
+        }
+        if (semester.getStartDate().isAfter(semester.getEndDate())) {
+            throw new IllegalArgumentException("Start date cannot be after end date");
+        }
+
         return semesterRespository.save(semester);
     }
 }

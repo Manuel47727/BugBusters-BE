@@ -29,7 +29,34 @@ public class UCServiceImpl implements UCService {
 
     @Override
     public UC addUC(UC uc) {
+        // Validação dos campos obrigatórios
+        validateUC(uc);
         return ucRepository.save(uc);
+    }
+
+    @Override
+    public UC updateUC(UC uc) {
+        // Validação dos campos obrigatórios
+        validateUC(uc);
+        return ucRepository.save(uc);
+    }
+
+    private void validateUC(UC uc) {
+        if (uc.getCourseId() <= 0) {
+            throw new IllegalArgumentException("Course ID must be greater than 0");
+        }
+        if (uc.getName() == null || uc.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("UC name cannot be null or empty");
+        }
+        if (uc.getAno() <= 0) {
+            throw new IllegalArgumentException("Year (ano) must be greater than 0");
+        }
+        if (uc.getSemestre() <= 0) {
+            throw new IllegalArgumentException("Semester (semestre) must be greater than 0");
+        }
+        if (uc.getTipo() == null || uc.getTipo().trim().isEmpty()) {
+            throw new IllegalArgumentException("Tipo (type) cannot be null or empty");
+        }
     }
 
     @Override
@@ -43,57 +70,28 @@ public class UCServiceImpl implements UCService {
     }
 
     @Override
-    public UC updateUC(UC uc) {
-        ucRepository.save(uc); // Updates if the entity exists, inserts otherwise
-        return uc;
-    }
-
     public List<UC> getUCsForCurrentSemesterAndCourse(int courseId) {
-        // Step 1: Get today's date
         LocalDate today = LocalDate.now();
-        System.out.println("Today's Date: " + today);
-
-        // Step 2: Get all semesters from the database
-        List<Semester> allSemesters = semesterRepository.findAll();
-
-        // Step 3: Find the current semester by comparing today's date with the semester's start and end dates
-        Optional<Semester> currentSemesterOpt = allSemesters.stream()
+        Optional<Semester> currentSemesterOpt = semesterRepository.findAll().stream()
                 .filter(semester -> !today.isBefore(semester.getStartDate()) && !today.isAfter(semester.getEndDate()))
-                .findFirst();  // Get the first semester that matches today's date
+                .findFirst();
 
-//        // Step 4: If no current semester is found, return an empty list
-//        if (currentSemesterOpt.isEmpty()) {
-//            System.out.println("No current semester found for today's date.");
-//            return List.of();  // Return empty list if no matching semester
-//        }
-
-        // Step 5: Get the semester number from the current semester
-        Semester currentSemester = currentSemesterOpt.get();
-        int currentSemesterNumber = currentSemester.getNumSemester();
-        //System.out.println("Current Semester Number: " + currentSemesterNumber);
-
-        // Step 6: Use the current semester number and courseId to filter UC records
-        List<UC> ucsForCurrentSemesterAndCourse = ucRepository.findAll().stream()
-                .filter(uc -> uc.getSemestre() == currentSemesterNumber && uc.getCourseId() == courseId)
-                .collect(Collectors.toList());
-
-        // Log the result to verify
-        if (ucsForCurrentSemesterAndCourse.isEmpty()) {
-            System.out.println("No UCs found for courseId: " + courseId + " and current semester.");
-        } else {
-            System.out.println("Found UCs: " + ucsForCurrentSemesterAndCourse.size());
+        if (currentSemesterOpt.isEmpty()) {
+            System.out.println("No current semester found for today's date.");
+            return List.of();
         }
 
-        // Step 7: Return the filtered UC list
-        return ucsForCurrentSemesterAndCourse;
+        Semester currentSemester = currentSemesterOpt.get();
+        return ucRepository.findAll().stream()
+                .filter(uc -> uc.getSemestre() == currentSemester.getNumSemester() && uc.getCourseId() == courseId)
+                .collect(Collectors.toList());
     }
 
     @Override
     public void closeUC(int ucId) {
-        // Find the UC by ID
         UC uc = ucRepository.findById(ucId).orElseThrow(() -> new RuntimeException("UC not found"));
 
-        // Check if evaluations for the UC have a total weight of 100%
+        // Validação do peso total das avaliações
         int totalWeight = evaluationRepository.findByUcId(ucId).stream()
                 .mapToInt(Evaluation::getWeight)
                 .sum();
@@ -102,27 +100,21 @@ public class UCServiceImpl implements UCService {
             throw new RuntimeException("Total weight of evaluations must be 100% to close the UC.");
         }
 
-        // Close the UC
+        // Fechar a UC
         uc.setUCClosed(true);
         ucRepository.save(uc);
     }
 
     public boolean validateEvaluationWeights(int ucId) {
-        // Fetch the UC and its associated evaluations
         UC uc = ucRepository.findById(ucId).orElseThrow(() -> new RuntimeException("UC not found"));
-
-        // Get the total weight from the evaluations associated with the UC
         double totalWeight = evaluationRepository.findByUcId(ucId).stream()
-                .mapToDouble(Evaluation::getWeight)  // Assuming Evaluation has a getWeight method
+                .mapToDouble(Evaluation::getWeight)
                 .sum();
-
-        // Check if the total weight is 100%
         return totalWeight == 100.0;
     }
 
     @Override
     public void openUC(int ucId) {
-        // Find the UC by ID, update isClosed to false, and save it
         UC uc = ucRepository.findById(ucId).orElseThrow(() -> new RuntimeException("UC not found"));
         uc.setUCClosed(false);
         ucRepository.save(uc);
@@ -130,30 +122,23 @@ public class UCServiceImpl implements UCService {
 
     @Override
     public boolean isUCClosed(int ucId) {
-        // Find the UC by ID and return isClosed
         UC uc = ucRepository.findById(ucId).orElseThrow(() -> new RuntimeException("UC not found"));
         return uc.isUCClosed();
     }
 
     @Override
     public void deleteEvaluationsByUCId(int ucId) {
-        // Delete all evaluations associated with the UC
         List<Evaluation> evaluations = evaluationRepository.findByUcId(ucId);
         if (!evaluations.isEmpty()) {
             evaluationRepository.deleteAll(evaluations);
-            System.out.println("Evaluations deleted for UC with id: " + ucId);
         }
     }
 
     @Transactional
     @Override
     public void deleteUC(int ucId) {
-        // Delete all evaluations first
         deleteEvaluationsByUCId(ucId);
-
-        // Then delete the UC
         UC uc = ucRepository.findById(ucId).orElseThrow(() -> new RuntimeException("UC not found"));
         ucRepository.delete(uc);
-        System.out.println("UC with id " + ucId + " has been deleted.");
     }
 }

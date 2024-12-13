@@ -17,9 +17,15 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/add")
-    public String add(@RequestBody User user) {
-        userService.addUser(user);
-        return "User saved";
+    public ResponseEntity<String> add(@RequestBody User user) {
+        try {
+            userService.addUser(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body("User saved successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
+        }
     }
 
     @GetMapping("/all")
@@ -29,10 +35,13 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User userObject) {
-        User user = userService.authenticate(userObject.getUsername(), userObject.getPassword());
-        if (user != null) {
+        try {
+            User user = userService.authenticate(userObject.getUsername(), userObject.getPassword());
             return ResponseEntity.ok(user);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to authenticate. Please try again later.");
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
     }
 }
