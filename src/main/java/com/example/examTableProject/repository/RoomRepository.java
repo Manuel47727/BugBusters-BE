@@ -18,6 +18,14 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     List<Room> findByCapacityGreaterThanAndTypeNot(int capacity, String type);
 
 
+    /**
+     * Finds rooms with a capacity greater than or equal to the given number
+     * and matching the given type (or any type if the given type is null).
+     *
+     * @param studentNum the minimum capacity of the rooms
+     * @param type the type of the rooms to find, or null to find all types
+     * @return a list of rooms matching the criteria
+     */
     @Query("SELECT r FROM Room r WHERE r.capacity >= :studentNum AND (:type IS NULL OR r.type = :type)")
     List<Room> findByCapacityAndType(@Param("studentNum") int studentNum, @Param("type") String type);
 }

@@ -17,6 +17,14 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Adds a new user to the repository after validating its required fields.
+     *
+     * @param user The user object to be added.
+     * @return The saved user object.
+     * @throws IllegalArgumentException if any validation constraints are violated.
+     * @throws RuntimeException if an unexpected error occurs.
+     */
     @Override
     public User addUser(User user) {
         validateUser(user);  // Chama o método de validação
@@ -29,6 +37,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * Retrieves all users from the repository.
+     *
+     * @return A list of all users available in the repository.
+     * @throws RuntimeException if an unexpected error occurs.
+     */
     @Override
     public List<User> findAll() {
         try {
@@ -39,6 +53,16 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * Authenticates a user given their username and password.
+     *
+     * @param username The username to be authenticated.
+     * @param password The password to be authenticated.
+     * @return The authenticated user if successful, or an error message if not.
+     * @throws IllegalArgumentException If the username or password is empty, or
+     *                                  if the username or password is invalid.
+     * @throws RuntimeException If there is an unexpected error.
+     */
     @Override
     public User authenticate(String username, String password) {
         if (username == null || username.trim().isEmpty()) {

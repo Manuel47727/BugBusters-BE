@@ -16,6 +16,12 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
+/**
+ * Add a new course.
+ *
+ * @param course The course to be added.
+ * @return Response message indicating success or failure.
+ */
     @PostMapping("/add")
     public ResponseEntity<String> add(@RequestBody Course course) {
         try {
@@ -28,6 +34,13 @@ public class CourseController {
         }
     }
 
+    /**
+     * Get all courses.
+     *
+     * @return ResponseEntity containing a list of all courses.
+     *         On success, returns HTTP status 200 (OK) with the list of courses.
+     *         On error, returns HTTP status 500 (Internal Server Error) with a null body.
+     */
     @GetMapping("/getAll")
     public ResponseEntity<List<Course>> getAllCourses() {
         try {

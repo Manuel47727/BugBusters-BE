@@ -15,6 +15,13 @@ public class UserPermissionCourseServiceImpl implements UserPermissionCourseServ
     @Autowired
     private UserPermissionCourseRepository userPermissionCourseRepository;
 
+    /**
+     * Adds a new user permission course to the repository.
+     *
+     * @param userPermissionCourse The user permission course to be added.
+     * @return The saved user permission course.
+     * @throws IllegalArgumentException if the user already has permission for the course.
+     */
     @Override
     public UserPermissionCourse addUserPermissionCourse(UserPermissionCourse userPermissionCourse) {
         validateUserPermissionCourse(userPermissionCourse);
@@ -32,6 +39,13 @@ public class UserPermissionCourseServiceImpl implements UserPermissionCourseServ
         return userPermissionCourseRepository.save(userPermissionCourse);
     }
 
+    /**
+     * Gets the course IDs associated with a given user.
+     *
+     * @param userId The ID of the user to retrieve courses for.
+     * @return A list of course IDs the user has access to.
+     * @throws IllegalArgumentException if the user ID is invalid.
+     */
     @Override
     public List<Integer> getCourseIdsForUser(int userId) {
         if (userId <= 0) {
@@ -45,6 +59,20 @@ public class UserPermissionCourseServiceImpl implements UserPermissionCourseServ
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Validates the given user permission course.
+     * <p>
+     * The following constraints are checked:
+     * <ul>
+     *     <li>User ID must be greater than 0.</li>
+     *     <li>Course ID must be greater than 0.</li>
+     * </ul>
+     * <p>
+     * If any of these constraints are violated, an
+     * {@link IllegalArgumentException} is thrown.
+     *
+     * @param userPermissionCourse The user permission course to be validated.
+     */
     private void validateUserPermissionCourse(UserPermissionCourse userPermissionCourse) {
         if (userPermissionCourse.getUserId() <= 0) {
             throw new IllegalArgumentException("User ID must be greater than 0");

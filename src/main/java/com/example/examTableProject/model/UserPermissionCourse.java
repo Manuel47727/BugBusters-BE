@@ -17,22 +17,47 @@ public class UserPermissionCourse {
     public UserPermissionCourse() {
     }
 
+    /**
+     * Returns the ID of this UserPermissionCourse.
+     *
+     * @return the ID of this UserPermissionCourse
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Sets the ID of this UserPermissionCourse.
+     *
+     * @param id The ID to be set for this UserPermissionCourse
+     */
     public void setId(int id) {
         this.id = id;
     }
 
+    /**
+     * Gets the ID of the User associated with this UserPermissionCourse.
+     *
+     * @return the ID of the User associated with this UserPermissionCourse
+     */
     public int getUserId() {
         return userId;
     }
 
+    /**
+     * Sets the ID of the User associated with this UserPermissionCourse.
+     *
+     * @param userId The ID of the User to be associated with this UserPermissionCourse
+     */
     public void setUserId(int userId) {
         this.userId = userId;
     }
 
+    /**
+     * Gets the ID of the course associated with this UserPermissionCourse.
+     *
+     * @return the ID of the course
+     */
     public int getCourseId() {
         return courseId;
     }

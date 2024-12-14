@@ -27,6 +27,14 @@ public class UCServiceImpl implements UCService {
     @Autowired
     private EvaluationRepository evaluationRepository;
 
+    /**
+     * Adds a new Unit of Curriculum (UC) to the repository after validating
+     * its required fields.
+     *
+     * @param uc The UC object to be added.
+     * @return The saved UC object.
+     * @throws IllegalArgumentException if any validation constraints are violated.
+     */
     @Override
     public UC addUC(UC uc) {
         // Validação dos campos obrigatórios
@@ -34,6 +42,14 @@ public class UCServiceImpl implements UCService {
         return ucRepository.save(uc);
     }
 
+    /**
+     * Updates an existing Unit of Curriculum (UC) in the repository after validating
+     * its required fields.
+     *
+     * @param uc The UC object to be updated.
+     * @return The updated UC object.
+     * @throws IllegalArgumentException if any validation constraints are violated.
+     */
     @Override
     public UC updateUC(UC uc) {
         // Validação dos campos obrigatórios
@@ -41,6 +57,22 @@ public class UCServiceImpl implements UCService {
         return ucRepository.save(uc);
     }
 
+    /**
+     * Validates the required fields of a Unit of Curriculum (UC) object.
+     * <p>
+     * The following constraints are checked:
+     * <ul>
+     *     <li>Course ID must be greater than 0.</li>
+     *     <li>UC name cannot be null or empty.</li>
+     *     <li>Year (ano) must be greater than 0.</li>
+     *     <li>Semester (semestre) must be greater than 0.</li>
+     *     <li>Tipo (type) cannot be null or empty.</li>
+     * </ul>
+     * <p>
+     * If any of these constraints are violated, an {@link IllegalArgumentException} is thrown.
+     *
+     * @param uc The UC object to be validated.
+     */
     private void validateUC(UC uc) {
         if (uc.getCourseId() <= 0) {
             throw new IllegalArgumentException("Course ID must be greater than 0");
@@ -59,16 +91,41 @@ public class UCServiceImpl implements UCService {
         }
     }
 
+/**
+ * Retrieves a list of all Unit of Curriculum (UC) objects from the repository.
+ *
+ * @return A list containing all UCs.
+ */
     @Override
     public List<UC> getAllUCs() {
         return ucRepository.findAll();
     }
 
+    /**
+     * Retrieves a Unit of Curriculum (UC) object from the repository by its ID.
+     * <p>
+     * If a UC with the given ID does not exist, this method returns {@code null}.
+     *
+     * @param ucId The ID of the UC to be retrieved.
+     * @return The UC with the given ID, or {@code null} if it does not exist.
+     */
     @Override
     public UC getUC(int ucId) {
         return ucRepository.findById(ucId).orElse(null);
     }
 
+    /**
+     * Retrieves a list of Unit of Curriculum (UC) objects for the current semester
+     * and specified course.
+     * <p>
+     * This method determines the current semester based on today's date and
+     * filters the UCs accordingly. If no current semester is found, an empty list
+     * is returned.
+     *
+     * @param courseId The ID of the course to filter the UCs.
+     * @return A list of UCs for the current semester and specified course, or an
+     *         empty list if no current semester is found.
+     */
     @Override
     public List<UC> getUCsForCurrentSemesterAndCourse(int courseId) {
         LocalDate today = LocalDate.now();
@@ -87,6 +144,16 @@ public class UCServiceImpl implements UCService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Closes the specified Unit of Curriculum (UC) after ensuring the total weight of its evaluations is 100%.
+     *
+     * <p>This method first retrieves the UC by its ID. It calculates the total weight of all associated evaluations.
+     * If the total weight is not exactly 100%, an exception is thrown. Otherwise, the UC is marked as closed and saved
+     * back to the repository.</p>
+     *
+     * @param ucId The ID of the UC to be closed.
+     * @throws RuntimeException if the UC is not found or if the total weight of evaluations is not 100%.
+     */
     @Override
     public void closeUC(int ucId) {
         UC uc = ucRepository.findById(ucId).orElseThrow(() -> new RuntimeException("UC not found"));
@@ -105,6 +172,17 @@ public class UCServiceImpl implements UCService {
         ucRepository.save(uc);
     }
 
+    /**
+     * Validates if the total weight of all evaluations for a given Unit of Curriculum (UC) equals 100%.
+     *
+     * <p>This method retrieves all evaluations associated with the specified UC ID
+     * and calculates their total weight. If the total weight is exactly 100%, the method
+     * returns true. Otherwise, it returns false.</p>
+     *
+     * @param ucId The ID of the UC for which to validate the evaluation weights.
+     * @return True if the total weight of all evaluations is 100%, false otherwise.
+     * @throws RuntimeException if the UC is not found.
+     */
     public boolean validateEvaluationWeights(int ucId) {
         UC uc = ucRepository.findById(ucId).orElseThrow(() -> new RuntimeException("UC not found"));
         double totalWeight = evaluationRepository.findByUcId(ucId).stream()
@@ -113,6 +191,16 @@ public class UCServiceImpl implements UCService {
         return totalWeight == 100.0;
     }
 
+    /**
+     * Opens a previously closed unit of curriculum (UC).
+     *
+     * <p>This method finds the UC by its ID and marks it as open by setting its
+     * {@code isUCClosed} field to false. The updated UC is then saved back to the
+     * repository.</p>
+     *
+     * @param ucId The ID of the UC to be opened.
+     * @throws RuntimeException if the UC is not found.
+     */
     @Override
     public void openUC(int ucId) {
         UC uc = ucRepository.findById(ucId).orElseThrow(() -> new RuntimeException("UC not found"));
@@ -120,12 +208,28 @@ public class UCServiceImpl implements UCService {
         ucRepository.save(uc);
     }
 
+    /**
+     * Checks if a given unit of curriculum (UC) is closed.
+     *
+     * @param ucId The ID of the UC to check.
+     * @return True if the UC is closed, false otherwise.
+     * @throws RuntimeException if the UC is not found.
+     */
     @Override
     public boolean isUCClosed(int ucId) {
         UC uc = ucRepository.findById(ucId).orElseThrow(() -> new RuntimeException("UC not found"));
         return uc.isUCClosed();
     }
 
+
+    /**
+     * Deletes all evaluations associated with the specified Unit of Curriculum (UC).
+     *
+     * <p>This method retrieves all evaluations linked to the given UC ID.
+     * If evaluations are found, they are removed from the repository.</p>
+     *
+     * @param ucId The ID of the UC whose evaluations are to be deleted.
+     */
     @Override
     public void deleteEvaluationsByUCId(int ucId) {
         List<Evaluation> evaluations = evaluationRepository.findByUcId(ucId);
@@ -134,6 +238,16 @@ public class UCServiceImpl implements UCService {
         }
     }
 
+    /**
+     * Deletes a unit of curriculum (UC) along with all its associated evaluations.
+     *
+     * <p>This method first deletes all evaluations linked to the given UC ID.
+     * Then, it removes the UC itself from the repository. The operation is performed
+     * within a transactional context to ensure data consistency.</p>
+     *
+     * @param ucId The ID of the UC to be deleted.
+     * @throws RuntimeException if the UC is not found.
+     */
     @Transactional
     @Override
     public void deleteUC(int ucId) {

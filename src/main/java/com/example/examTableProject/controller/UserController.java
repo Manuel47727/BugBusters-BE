@@ -16,6 +16,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    /**
+     * Saves a new user in the database.
+     * @param user a User object to be saved
+     * @return a ResponseEntity containing the result of the operation
+     * @throws IllegalArgumentException if the user object is invalid
+     * @throws RuntimeException if an unexpected error occurs
+     */
     @PostMapping("/add")
     public ResponseEntity<String> add(@RequestBody User user) {
         try {
@@ -30,9 +37,20 @@ public class UserController {
 
     @GetMapping("/all")
     public List<User> findAll() {
+    /**
+     * Finds all users in the database.
+     * @return a list of User objects representing all users in the database
+     */
         return userService.findAll();
     }
 
+    /**
+     * Authenticates a user by username and password.
+     * @param userObject a User object with the username and password to be authenticated
+     * @return a ResponseEntity containing the authenticated user if successful, or an error message if not
+     * @throws IllegalArgumentException if the user object is invalid
+     * @throws RuntimeException if an unexpected error occurs
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User userObject) {
         try {

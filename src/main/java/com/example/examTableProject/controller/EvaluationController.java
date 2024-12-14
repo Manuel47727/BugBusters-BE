@@ -16,6 +16,7 @@ public class EvaluationController {
     @Autowired
     private EvaluationService evaluationService;
 
+
     /**
      * Save evaluations for a specific UC (Unit of Curriculum).
      * It first deletes the existing evaluations for the given UC and then adds the new ones.
@@ -55,15 +56,13 @@ public class EvaluationController {
      */
     @GetMapping("/get")
     public ResponseEntity<List<Evaluation>> getEvaluationsForUC(@RequestParam int ucId) {
+
         if (ucId <= 0) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
         try {
             List<Evaluation> evaluations = evaluationService.getEvaluationsForUC(ucId);
-            if (evaluations.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-            }
             return ResponseEntity.ok(evaluations);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

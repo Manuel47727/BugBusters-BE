@@ -13,6 +13,13 @@ public class EvaluationServiceImpl implements EvaluationService {
     @Autowired
     private EvaluationRepository evaluationRepository;
 
+    /**
+     * Save an evaluation to the database.
+     *
+     * @param evaluation The evaluation to add.
+     * @return The saved evaluation.
+     * @throws IllegalArgumentException if any of the evaluation fields are invalid.
+     */
     @Override
     public Evaluation addEvaluation(Evaluation evaluation) {
         if (evaluation.getType() == null || evaluation.getType().trim().isEmpty()) {
@@ -34,16 +41,32 @@ public class EvaluationServiceImpl implements EvaluationService {
         return evaluationRepository.save(evaluation);
     }
 
+    /**
+     * Retrieve a list of evaluations associated with the specified unit of curriculum (UC).
+     *
+     * @param ucId The ID of the UC for which to retrieve evaluations.
+     * @return A list of evaluations related to the given UC ID.
+     */
     @Override
     public List<Evaluation> getEvaluationsForUC(int ucId) {
         return evaluationRepository.findByUcId(ucId);
     }
 
+    /**
+     * Retrieves a list of all evaluations in the database.
+     *
+     * @return A list of all evaluations.
+     */
     @Override
     public List<Evaluation> getAllEvaluations() {
         return evaluationRepository.findAll();
     }
 
+    /**
+     * Delete all evaluations associated with a particular unit of curriculum (UC).
+     *
+     * @param ucId The ID of the UC for which to delete evaluations.
+     */
     @Override
     public void deleteEvaluationsForUC(int ucId) {
         List<Evaluation> evaluations = evaluationRepository.findByUcId(ucId);

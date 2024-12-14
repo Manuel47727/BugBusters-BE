@@ -18,6 +18,14 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private CourseRepository courseRepository;
 
+    /**
+     * Add a new course to the database.
+     *
+     * @param course The course to add.
+     * @return The saved course.
+     * @throws IllegalArgumentException if the course name is empty
+     * @throws RuntimeException if there is an unexpected error
+     */
     @Transactional
     public Course addCourse(Course course) {
         if (course.getCourseName() == null || course.getCourseName().trim().isEmpty()) {
@@ -32,6 +40,12 @@ public class CourseServiceImpl implements CourseService {
     }
 
 
+    /**
+     * Retrieve all courses from the database.
+     *
+     * @return A list of all courses. The list is empty if there are no courses.
+     * @throws RuntimeException if there is an unexpected error
+     */
     @Override
     public List<Course> getAllCourses() {
         try {
@@ -42,6 +56,13 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
+    /**
+     * Retrieve a list of courses by their IDs.
+     *
+     * @param courseIds List of course IDs to retrieve.
+     * @return A list of courses corresponding to the provided IDs. The list is empty if no courses are found.
+     * @throws RuntimeException if there is an unexpected error fetching the courses.
+     */
     @Override
     public List<Course> getCoursesByIds(List<Integer> courseIds) {
         try {
